@@ -1,9 +1,13 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import Controller from 'src/controllers/define.controller';
-import Service from 'src/services/define.service';
-import Model from 'src/models/define.model';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { RouterModule } from '@nestjs/core';
+import Route from './app.router';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './user/users.module';
+import { TaskModule } from './task/task.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -22,9 +26,11 @@ import Model from 'src/models/define.model';
       synchronize: true, // sync database schema (use false in production)
       logging: false,
     }),
-    SequelizeModule.forFeature(Model),
+    AuthModule,
+    UsersModule,
+    TaskModule,
+    ProjectModule,
+    RouterModule.register([Route])
   ],
-  controllers: Controller,
-  providers: Service,
 })
 export class AppModule {}

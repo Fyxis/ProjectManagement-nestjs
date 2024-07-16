@@ -1,20 +1,19 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Injectable, Post, Res, UploadedFiles, UseInterceptors } from '@nestjs/common'
 import { FilesInterceptor, NoFilesInterceptor } from '@nestjs/platform-express'
-import { AuthService } from 'src/services/auth.service'
-import { DateService } from 'src/services/date.service'
-import hashPassword from 'src/middlewares/hashingPassword'
-import validatePassword from 'src/middlewares/verifyPassword'
-import moment from 'moment'
+import { Response } from 'express'
+import { AuthService } from 'src/auth/auth.service'
+import hashPassword from 'src/auth/middlewares/hashingPassword'
+import validatePassword from 'src/auth/middlewares/verifyPassword'
 
-@Controller('/auth')
+@Controller()
 @Injectable()
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('/register')
     @UseInterceptors(FilesInterceptor('photo'))
-    async register(@Res() res, @Body() body, @UploadedFiles() files: Array<Express.Multer.File>) {
+    async register(@Res() res: Response, @Body() body: { name: string, email: string, role: string, phone: number, password: string }, @UploadedFiles() files: Array<Express.Multer.File>) {
         const { name, email, role, phone, password } = body
         const photo = files
         console.log(photo)
@@ -53,7 +52,7 @@ export class AuthController {
     
     @Post('/login')
     @UseInterceptors(NoFilesInterceptor())
-    async login(@Res() res, @Body() body) {
+    async login(@Res() res: Response, @Body() body: { email: string, password: string }) {
         const { email, password } = body
         try {
             //! Validate Email
